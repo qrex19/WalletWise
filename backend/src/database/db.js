@@ -1,33 +1,18 @@
 const mongoose = require("mongoose"); //importing the mongoose module
+require("dotenv").config();
 
-mongoose.connect(
-  "mongodb+srv://nishanttjhaa:Madhubani%40123@cluster0.fazlyab.mongodb.net/"
-);
+mongoose.connect(process.env.MONGODB_URL);
 
 const userSchema = mongoose.Schema({
-  userId: {
-    type: String,
-    required: true,
-  }, //accountname(email)
-
-  firstName: {
-    type: String,
-    required: true,
-  },
-
-  lastName: {
-    type: String,
-    required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
+  userId: String,
+  firstName: String,
+  lastName: String,
+  password: String,
 });
 
 const accountSchema = mongoose.Schema({
   userId: String,
-  balance: Number,
+  balance: Number, //the number 33.45 should be stored as 3345
 });
 
 const Account = mongoose.model("Account", accountSchema);

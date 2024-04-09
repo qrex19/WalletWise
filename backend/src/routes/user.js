@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const z = require("zod");
 const jwt = require("jsonwebtoken");
-const { JWT_KEY: key } = require("./config");
-const { User } = require("../database/db");
+require("dotenv").config();
+const { User, Account } = require("../database/db");
 const { authMiddleware } = require("./middleware");
 
 const signupSchema = z.object({
@@ -36,9 +36,19 @@ router.post("/signup", async (req, res) => {
       const userData = new User(signupObject);
       await userData.save();
       res.status(200);
-      const token = jwt.sign(signupObject, key);
+      const token = jwt.sign(signupObject, process.env.JWT_KEY);
+
+      //account initialisation
+
+      const account = new Account({
+        userId: signupObject.userId,
+        balance: 1000,
+      });
+
+      await account.save();
+
       res.send({
-        message: "user account created successfully",
+        message: "user account created successfully and balance added",
         token: token,
       });
     }
@@ -50,7 +60,7 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-router.put("/", authMiddleware, async (req, res) => {
+router.put("/update", authMiddleware, async (req, res) => {
   //for updating data of the user account
 
   const user = await User.findOne({
