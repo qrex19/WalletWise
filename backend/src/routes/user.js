@@ -60,6 +60,35 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+router.post("/signin", async (req, res) => {
+  //expect username and password
+
+  const signinObject = req.body;
+
+  const findUserid = await User.findOne({
+    userId: signinObject.userId,
+    password: signinObject.password,
+  });
+
+  if (findUserid == null) {
+    return res.status(400).json({
+      message: "user not found",
+    });
+  }
+
+  const object = {
+    userId: signinObject.userId,
+  };
+
+  const token = jwt.sign(object, process.env.JWT_KEY);
+
+  res.status(200).json({
+    token: token,
+  });
+
+  // const token =
+});
+
 router.put("/update", authMiddleware, async (req, res) => {
   //for updating data of the user account
 
